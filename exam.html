@@ -1,22 +1,137 @@
 <!DOCTYPE html>
 <html>
-<head><title>Exam</title></head>
+<head>
+  <title>Exam Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background-color: #003366;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #fff;
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+
+    h2, h3 {
+      text-align: center;
+    }
+
+    .question {
+      margin-bottom: 25px;
+    }
+
+    .question p {
+      font-weight: bold;
+    }
+
+    button {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px 25px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    img.diagram {
+      display: block;
+      margin: 10px auto;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
 <body>
-  <h2>Final Exam</h2>
-  <form id="examForm" onsubmit="submitExam(event)">
-    <p>1. What is the capital of France?</p>
-    <label><input type="radio" name="q1" value="Paris"> Paris</label>
-    <label><input type="radio" name="q1" value="London"> London</label><br>
+  <div class="header">
+    <h1>INSTITUTE OF COSMETOLOGY AND AESTHETIC - Online Examination</h1>
+  </div>
 
-    <p>2. 2 + 2 = ?</p>
-    <label><input type="radio" name="q2" value="4"> 4</label>
-    <label><input type="radio" name="q2" value="3"> 3</label><br>
+  <div class="container">
+    <h2>Student Final Exam</h2>
+    <h3 id="timer">Time Left: 30:00</h3>
 
-    <button type="submit">Submit</button>
-  </form>
+    <form id="examForm" onsubmit="submitExam(event)">
+      <div class="question">
+        <p>1. What is the capital of France?</p>
+        <label><input type="radio" name="q1" value="Paris"> Paris</label><br>
+        <label><input type="radio" name="q1" value="London"> London</label><br>
+      </div>
+
+      <div class="question">
+        <p>2. 2 + 2 = ?</p>
+        <label><input type="radio" name="q2" value="4"> 4</label><br>
+        <label><input type="radio" name="q2" value="3"> 3</label><br>
+      </div>
+
+      <div class="question">
+        <p>3. 12 + 12 = ?</p>
+        <label><input type="radio" name="q3" value="24"> 24</label><br>
+        <label><input type="radio" name="q3" value="22"> 22</label><br>
+      </div>
+
+      <div class="question">
+        <p>4. Python is an interpreted language?</p>
+        <label><input type="radio" name="q4" value="yes"> Yes</label><br>
+        <label><input type="radio" name="q4" value="no"> No</label><br>
+      </div>
+
+      <div class="question">
+        <p>5. Name the 4 major parts of the skin shown in the diagram (1 mark each):</p>
+        <img src="Skin-Anatomy.png" alt="Skin Diagram" class="diagram" width="300">
+        <input type="text" name="q5_1" placeholder="Part 1 (e.g. Epidermis)">
+        <input type="text" name="q5_2" placeholder="Part 2">
+        <input type="text" name="q5_3" placeholder="Part 3">
+        <input type="text" name="q5_4" placeholder="Part 4">
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
 
   <script>
-    const correctAnswers = { q1: "Paris", q2: "4" };
+    const correctAnswers = {
+      q1: "Paris",
+      q2: "4",
+      q3: "24",
+      q4: "yes",
+      q5_1: "epidermis",
+      q5_2: "dermis",
+      q5_3: "hypodermis",
+      q5_4: "hair follicle"
+    };
 
     function submitExam(e) {
       e.preventDefault();
@@ -26,17 +141,23 @@
 
       for (const q in correctAnswers) {
         const answer = form[q]?.value?.trim().toLowerCase();
-        if (answer === correctAnswers[q].toLowerCase()) score++;
+        const correct = correctAnswers[q].toLowerCase();
+        if (q.startsWith("q5_")) {
+          if (answer === correct) score += 1;
+        } else {
+          if (answer === correct) score += 1;
+        }
       }
 
       const student = JSON.parse(localStorage.getItem("currentStudent")) || {};
       student.score = score;
       student.endTime = new Date().toISOString();
 
-      console.log("📤 Sending data to script:", student);
+      
+      const originalURL = "https://script.google.com/macros/s/AKfycbwdRFFESfmmYlPac37pwC1FroqasRApMJgQut2WiumqWVb3k-SHVOuxqk-4mhI5ZH6lYA/exec";
+      const scriptURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwdRFFESfmmYlPac37pwC1FroqasRApMJgQut2WiumqWVb3k-SHVOuxqk-4mhI5ZH6lYA/exec");
 
-      const originalURL = "https://script.google.com/macros/s/AKfycbwdRFFESfmmYlPac37pwC1FroqasRApMJgQut2WiumqWVb3k-SHVOuxqk-4mhI5ZH6lYA/exec"; // 🔁 Replace with your actual script URL
-      const scriptURL = "https://corsproxy.io/?" + encodeURIComponent(originalURL);
+      console.log("📤 Sending data to script:", student);
 
       fetch(scriptURL, {
         method: "POST",
@@ -49,9 +170,33 @@
       .then(result => console.log("✅ Response from Sheet:", result))
       .catch(err => console.error("❌ Sheet Error:", err));
 
+      // Local fallback (optional)
+      const records = JSON.parse(localStorage.getItem("examRecords") || "[]");
+      records.push(student);
+      localStorage.setItem("examRecords", JSON.stringify(records));
       localStorage.setItem("lastResult", JSON.stringify(student));
+
       window.location.href = "thankyou.html";
     }
+
+    window.onload = function () {
+      let timeLeft = 30 * 60;
+      const timerDisplay = document.getElementById("timer");
+
+      const countdown = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60).toString().padStart(2, "0");
+        const seconds = (timeLeft % 60).toString().padStart(2, "0");
+        timerDisplay.textContent = `Time Left: ${minutes}:${seconds}`;
+
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          alert("⏰ Time's up! Submitting your exam.");
+          submitExam(new Event('submit'));
+        }
+
+        timeLeft--;
+      }, 1000);
+    };
   </script>
 </body>
 </html>
