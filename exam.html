@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head><title>Exam</title></head>
+<body>
+  <h2>Final Exam</h2>
+  <form id="examForm" onsubmit="submitExam(event)">
+    <p>1. What is the capital of France?</p>
+    <label><input type="radio" name="q1" value="Paris"> Paris</label>
+    <label><input type="radio" name="q1" value="London"> London</label><br>
+
+    <p>2. 2 + 2 = ?</p>
+    <label><input type="radio" name="q2" value="4"> 4</label>
+    <label><input type="radio" name="q2" value="3"> 3</label><br>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const correctAnswers = { q1: "Paris", q2: "4" };
+
+    function submitExam(e) {
+      e.preventDefault();
+      console.log("🚀 submitExam called");
+      const form = document.getElementById("examForm");
+      let score = 0;
+
+      for (const q in correctAnswers) {
+        const answer = form[q]?.value?.trim().toLowerCase();
+        if (answer === correctAnswers[q].toLowerCase()) score++;
+      }
+
+      const student = JSON.parse(localStorage.getItem("currentStudent")) || {};
+      student.score = score;
+      student.endTime = new Date().toISOString();
+
+      console.log("📤 Sending data to script:", student);
+
+      const originalURL = "https://script.google.com/macros/s/AKfycbwdRFFESfmmYlPac37pwC1FroqasRApMJgQut2WiumqWVb3k-SHVOuxqk-4mhI5ZH6lYA/exec"; // 🔁 Replace with your actual script URL
+      const scriptURL = "https://corsproxy.io/?" + encodeURIComponent(originalURL);
+
+      fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify(student),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(res => res.text())
+      .then(result => console.log("✅ Response from Sheet:", result))
+      .catch(err => console.error("❌ Sheet Error:", err));
+
+      localStorage.setItem("lastResult", JSON.stringify(student));
+      window.location.href = "thankyou.html";
+    }
+  </script>
+</body>
+</html>
