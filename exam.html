@@ -190,6 +190,10 @@
         if (timeLeft <= 0) {
           clearInterval(countdown);
           alert("⏰ Time's up! Submitting your exam.");
+         function submitExam(e) {
+  e.preventDefault();
+  console.log("🚀 submitExam called"); // add this line
+
           submitExam(new Event('submit'));
         }
 
